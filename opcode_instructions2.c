@@ -1,102 +1,135 @@
 #include "monty.h"
 
 /**
- * _queue - sets the format of the data to a queue (FIFO)
+ * push - Add node to the stack
+ * @stack: head of linkedlist
+ * @line_number: line number of the instruction
  *
- * @doubly: head of the linked list
- * @cline: line number;
- * Return: no return
+ * Return: No return
  */
-void _queue(stack_t **doubly, unsigned int cline)
+void push(stack_t **stack, unsigned int line_number)
 {
-	(void)doubly;
-	(void)cline;
 
-	vglo.lifo = 0;
-}
+	int n = 0;
 
-/**
- * _stack - sets the format fo the data to a stack (LIFO)
- *
- * @doubly: head of the linked list
- * @cline: line number;
- * Return: no return
- */
-void _stack(stack_t **doubly, unsigned int cline)
-{
-	(void)doubly;
-	(void)cline;
-
-	vglo.lifo = 1;
-}
-
-/**
- * _add - adds the top two elements of the stack
- *
- * @doubly: head of the linked list
- * @cline: line number;
- * Return: no return
- */
-void _add(stack_t **doubly, unsigned int cline)
-{
-	int m = 0;
-	stack_t *aux = NULL;
-
-	aux = *doubly;
-
-	for (; aux != NULL; aux = aux->next, m++)
-		;
-
-	if (m < 2)
+	if (globalvar.token2 == NULL)
 	{
-		dprintf(2, "L%u: can't add, stack too short\n", cline);
-		free_vglo();
-		exit(EXIT_FAILURE);
+		free_dlistint(*stack);
+		stderr_int(line_number);
 	}
-
-	aux = (*doubly)->next;
-	aux->n += (*doubly)->n;
-	_pop(doubly, cline);
-}
-
-/**
- * _nop - doesn't do anythinhg
- *
- * @doubly: head of the linked list
- * @cline: line number;
- * Return: no return
- */
-void _nop(stack_t **doubly, unsigned int cline)
-{
-	(void)doubly;
-	(void)cline;
-}
-
-/**
- * _sub - subtracts the top element to the second top element of the stack
- *
- * @doubly: head of the linked list
- * @cline: line number;
- * Return: no return
- */
-void _sub(stack_t **doubly, unsigned int cline)
-{
-	int m = 0;
-	stack_t *aux = NULL;
-
-	aux = *doubly;
-
-	for (; aux != NULL; aux = aux->next, m++)
-		;
-
-	if (m < 2)
+	if (!_isdigit() || stack == NULL)
 	{
-		dprintf(2, "L%u: can't sub, stack too short\n", cline);
-		free_vglo();
-		exit(EXIT_FAILURE);
+		free_dlistint(*stack);
+		stderr_int(line_number);
 	}
+	n = atoi(globalvar.token2);
+	if (*stack  == NULL)
+	{
+		create_node_stackfirst(stack, n);
+	}
+	else
+	{
+		create_node_stackend(stack, n);
+	}
+}
 
-	aux = (*doubly)->next;
-	aux->n -= (*doubly)->n;
-	_pop(doubly, cline);
+/**
+ * pall - Print the stack
+ * @stack: head of linkedlist
+ * @line_number: line number of the instruction
+ *
+ * Return: No return
+ */
+void pall(stack_t **stack, unsigned int line_number)
+{
+
+	stack_t *temp = NULL;
+
+
+	if (*stack == NULL)
+	{
+		return;
+	}
+	if (*stack == NULL && line_number != 1)
+	{
+		free_dlistint(*stack);
+		free_globalvars();
+		exit(EXIT_SUCCESS);
+	}
+	temp = *stack;
+	while (temp->next != NULL)
+		temp = temp->next;
+	while (temp->prev != NULL)
+	{
+		printf("%d", temp->n);
+		temp = temp->prev;
+		printf("\n");
+	}
+	printf("%d\n", temp->n);
+}
+
+
+/**
+ * pint - Print the stack
+ * @stack: head of linkedlist
+ * @line_number: line number of the instruction
+ *
+ * Return: No return
+ */
+void pint(stack_t **stack, unsigned int line_number)
+{
+
+	stack_t *temp = NULL;
+
+	if (stack == NULL || *stack == NULL)
+	{
+		pint_e(line_number);
+		return;
+	}
+	temp = *stack;
+	while (temp->next != NULL)
+		temp = temp->next;
+
+	printf("%d", temp->n);
+	printf("\n");
+}
+
+/**
+ * swap - Print the stack
+ * @stack: head of linkedlist
+ * @line_number: line number of the instruction
+ *
+ * Return: No return
+ */
+void swap(stack_t **stack, unsigned int line_number)
+{
+	stack_t *temp;
+	int i, j;
+
+	if (*stack == NULL || stack == NULL)
+		op_e(line_number, "swap");
+
+	temp = (*stack)->next;
+	if ((*stack)->next == NULL)
+		op_e(line_number, "swap");
+	while (temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	i = temp->n;
+	j = temp->prev->n;
+	temp->n = j;
+	temp->prev->n = i;
+}
+/**
+ * nop - does not do anything
+ * @stack: head of linkedlist
+ * @line_number: line number of the instruction
+ *
+ * Return: No return
+ */
+void nop(stack_t **stack, unsigned int line_number)
+{
+	(void)stack;
+	(void)line_number;
 }
